@@ -10,10 +10,20 @@ body {
 
 .container {
     text-align: center;
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
     color: #333;
+    margin-bottom: 0.5rem;
+}
+
+p {
+    color: #666;
+    margin-bottom: 1.5rem;
 }
 
 .board {
@@ -33,17 +43,39 @@ h1 {
     align-items: center;
     font-size: 2.5rem;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: all 0.3s ease;
+    border-radius: 5px;
 }
 
 .cell:hover {
     background-color: #e0e0e0;
+    transform: scale(1.03);
+}
+
+.cell.x {
+    color: #ff4757;
+}
+
+.cell.o {
+    color: #2ed573;
 }
 
 .status {
     margin: 20px 0;
     font-size: 1.2rem;
     font-weight: bold;
+    color: #333;
+}
+
+.scores {
+    margin: 15px 0;
+    font-size: 1rem;
+    color: #555;
+}
+
+.scores p {
+    margin: 5px 0;
+    color: #555;
 }
 
 #reset {
@@ -54,8 +86,21 @@ h1 {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    transition: background-color 0.3s;
 }
 
 #reset:hover {
     background-color: #555;
+    transform: scale(1.05);
+}
+
+/* Animation for winning cells */
+.winning-cell {
+    animation: pulse 0.5s ease 3;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
 }
