@@ -1,12 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
     const board = Array(9).fill(null);
-    const cells = document.querySelectorAll('.cell');
-    const statusDisplay = document.getElementById('status');
-    const resetButton = document.getElementById('reset');
     let currentPlayer = 'X'; // Human is X, AI is O
     let gameActive = true;
+    let scores = { player: 0, ai: 0, draws: 0 };
 
-    // Winning conditions (rows, columns, diagonals)
+    // Winning conditions
     const winConditions = [
         [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
         [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
@@ -52,7 +50,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Make a move on the board
     function makeMove(index, player) {
         board[index] = player;
-        document.querySelector(`.cell[data-index="${index}"]`).textContent = player;
+        const cell = document.querySelector(`.cell[data-index="${index}"]`);
+        cell.textContent = player;
+        cell.classList.add(player.toLowerCase()); // Add class for color
     }
 
     // Check for a winner
@@ -61,18 +61,37 @@ document.addEventListener('DOMContentLoaded', () => {
             const [a, b, c] = condition;
             if (board[a] && board[a] === board[b] && board[a] === board[c]) {
                 gameActive = false;
-                statusDisplay.textContent = board[a] === 'X' ? "You win!" : "AI wins!";
+                highlightWinningCells(condition);
+                
+                if (board[a] === 'X') {
+                    scores.player++;
+                    statusDisplay.textContent = "You win!";
+                } else {
+                    scores.ai++;
+                    statusDisplay.textContent = "AI wins!";
+                }
+                updateScores();
                 return true;
             }
         }
         return false;
     }
 
+    // Highlight winning cells
+    function highlightWinningCells(cells) {
+        cells.forEach(index => {
+            const cell = document.querySelector(`.cell[data-index="${index}"]`);
+            cell.classList.add('winning-cell');
+        });
+    }
+
     // Check for a draw
     function checkDraw() {
         if (board.every(cell => cell !== null)) {
             gameActive = false;
+            scores.draws++;
             statusDisplay.textContent = "It's a draw!";
+            updateScores();
             return true;
         }
         return false;
@@ -132,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Helper function for Minimax to check winners
+    // Helper function for Minimax
     function checkWinnerForMinimax(player) {
         for (const condition of winConditions) {
             const [a, b, c] = condition;
@@ -143,6 +162,13 @@ document.addEventListener('DOMContentLoaded', () => {
         return false;
     }
 
+    // Update score display
+    function updateScores() {
+        document.getElementById('player-score').textContent = scores.player;
+        document.getElementById('ai-score').textContent = scores.ai;
+        document.getElementById('draw-score').textContent = scores.draws;
+    }
+
     // Reset the game
     function resetGame() {
         board.fill(null);
@@ -150,11 +176,22 @@ document.addEventListener('DOMContentLoaded', () => {
         currentPlayer = 'X';
         statusDisplay.textContent = "Your turn (X)";
         initializeBoard();
+        
+        // Remove winning highlights
+        document.querySelectorAll('.cell').forEach(cell => {
+            cell.classList.remove('winning-cell', 'x', 'o');
+            cell.textContent = '';
+        });
     }
+
+    // DOM elements
+    const statusDisplay = document.getElementById('status');
+    const resetButton = document.getElementById('reset');
 
     // Event listeners
     resetButton.addEventListener('click', resetGame);
 
     // Initialize the game
     initializeBoard();
+    updateScores();
 });
