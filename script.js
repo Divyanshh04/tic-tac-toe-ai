@@ -76,7 +76,31 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         return false;
     }
+// ... (keep all previous code until the checkWinner function)
 
+function checkWinner() {
+    for (const condition of winConditions) {
+        const [a, b, c] = condition;
+        if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+            gameActive = false;
+            highlightWinningCells(condition);
+            
+            // Add this block to properly handle win detection
+            if (board[a] === 'X') {
+                scores.player++;
+                statusDisplay.textContent = "You win! (Wait, how?!)"; // Should never happen with perfect AI
+            } else {
+                scores.ai++;
+                statusDisplay.textContent = "AI wins!";
+            }
+            updateScores();
+            return true;
+        }
+    }
+    return false;
+}
+
+// ... (rest of the code remains the same)
     // Highlight winning cells
     function highlightWinningCells(cells) {
         cells.forEach(index => {
